@@ -74,9 +74,9 @@ if (Test-Path $profileFilePath) {
             Write-Host "El perfil ya existe en settings.json." -ForegroundColor Yellow
         } else {
             $settings.profiles.list += $newProfile
+            $settings.defaultProfile = $newProfile.guid
             $settings | ConvertTo-Json -Depth 100 | Set-Content $settingsPath -Force
             Write-Host "Perfil agregado exitosamente desde el archivo JSON." -ForegroundColor Green
-            $settings.defaultProfile = $newProfile.guid
         }
     } else {
         Write-Host "No se encontró el archivo settings.json en la ruta especificada." -ForegroundColor Red
