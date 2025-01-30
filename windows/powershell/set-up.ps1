@@ -60,9 +60,7 @@ if (Test-Path $ohMyPoshProfile) {
 }
 
 # 6. Instalar FiraCode Nerd Font Mono
-Write-Host "Instalando la fuente FiraCode Nerd Font Mono..." -ForegroundColor Yellow
-& ([scriptblock]::Create((Invoke-WebRequest 'https://to.loredo.me/Install-NerdFont.ps1'))) -Confirm:$false -Name fira-code
-Write-Host "Fuente FiraCode Nerd Font Mono instalada correctamente." -ForegroundColor Green
+& ".\install-nerd.ps1"
 
 # 7. Agregar el perfil a Windows Terminal desde el archivo JSON
 if (Test-Path $profileFilePath) {
