@@ -59,7 +59,12 @@ if (Test-Path $ohMyPoshProfile) {
     Exit 1
 }
 
-# 6. Agregar el perfil a Windows Terminal desde el archivo JSON
+# 6. Instalar FiraCode Nerd Font Mono
+Write-Host "Instalando la fuente FiraCode Nerd Font Mono..." -ForegroundColor Yellow
+& ([scriptblock]::Create((Invoke-WebRequest 'https://to.loredo.me/Install-NerdFont.ps1'))) -Confirm:$false -Name fira-code
+Write-Host "Fuente FiraCode Nerd Font Mono instalada correctamente." -ForegroundColor Green
+
+# 7. Agregar el perfil a Windows Terminal desde el archivo JSON
 if (Test-Path $profileFilePath) {
     Write-Host "Agregando perfil desde el archivo JSON..."
     
@@ -90,5 +95,5 @@ if (Test-Path $profileFilePath) {
     Exit 1
 }
 
-# 7. Confirmación final
+# 8. Confirmación final
 Write-Host "Configuración completa. Abre PowerShell 7 (pwsh) y Windows Terminal para aplicar los cambios." -ForegroundColor Green
