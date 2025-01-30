@@ -5,6 +5,10 @@
 $ohMyPoshProfile = "$PSScriptRoot\custom-posh.json"
 $customProfilePath = "$PSScriptRoot\Microsoft.PowerShell_profile.ps1"
 $userProfilePath = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+$profileFilePath = "$PSScriptRoot\terminal-profile.json"  # Ruta del archivo JSON con el perfil
+
+# Ruta del archivo settings.json de Windows Terminal
+$settingsPath = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
 
 # 1. Instalar PowerShell (si es necesario)
 if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
@@ -55,5 +59,36 @@ if (Test-Path $ohMyPoshProfile) {
     Exit 1
 }
 
-# 6. Confirmación final
-Write-Host "Configuración completa. Abre PowerShell 7 (pwsh) para aplicar los cambios." -ForegroundColor Green
+# 6. Agregar el perfil a Windows Terminal desde el archivo JSON
+if (Test-Path $profileFilePath) {
+    Write-Host "Agregando perfil desde el archivo JSON..."
+    
+    # Leer el contenido actual de settings.json
+    if (Test-Path $settingsPath) {
+        $settings = Get-Content $settingsPath -Raw | ConvertFrom-Json
+        
+        # Leer el perfil desde el archivo JSON
+        $newProfile = Get-Content $profileFilePath | ConvertFrom-Json
+        
+        # Comprobar si el perfil ya existe
+        $existingProfile = $settings.profiles.list | Where-Object { $_.guid -eq $newProfile.guid }
+        if ($existingProfile) {
+            Write-Host "El perfil ya existe en settings.json." -ForegroundColor Yellow
+        } else {
+            # Agregar el nuevo perfil a la lista de perfiles
+            $settings.profiles.list += $newProfile
+            # Guardar los cambios en settings.json sin romper la estructura
+            $settings | ConvertTo-Json -Depth 100 | Set-Content $settingsPath -Force
+            Write-Host "Perfil agregado exitosamente desde el archivo JSON." -ForegroundColor Green
+        }
+    } else {
+        Write-Host "No se encontró el archivo settings.json en la ruta especificada." -ForegroundColor Red
+        Exit 1
+    }
+} else {
+    Write-Host "El archivo de perfil no se encontró en la ruta especificada: $profileFilePath" -ForegroundColor Red
+    Exit 1
+}
+
+# 7. Confirmación final
+Write-Host "Configuración completa. Abre PowerShell 7 (pwsh) y Windows Terminal para aplicar los cambios." -ForegroundColor Green
