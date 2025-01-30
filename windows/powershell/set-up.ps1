@@ -39,12 +39,7 @@ foreach ($module in $requiredModules) {
 }
 
 # Configure Oh My Posh with the custom theme
-if (Test-Path $ohMyPoshProfile) {
-    Copy-Item $ohMyPoshProfile -Destination "$HOME\.oh-my-posh.json" -Force
-} else {
-    Write-Host "Error: The Oh My Posh theme file was not found at $ohMyPoshProfile."
-    Exit 1
-}
+Copy-Item $ohMyPoshProfile -Destination "$HOME\.oh-my-posh.json" -Force
 
 # Install FiraCode Nerd Font Mono
 oh-my-posh font install RobotoMono
@@ -54,36 +49,26 @@ $profileDir = Split-Path -Parent $userProfilePath
 if (-not (Test-Path $profileDir)) {
     New-Item -ItemType Directory -Path $profileDir -Force
 }
-if (Test-Path $customProfilePath) {
-    Copy-Item $customProfilePath -Destination $userProfilePath -Force
-} else {
-    Write-Host "Error: The profile file was not found at $customProfilePath."
-    Exit 1
-}
+Copy-Item $customProfilePath -Destination $userProfilePath -Force
 
 # Add profile to Windows Terminal
-if (Test-Path $profileFilePath) {
-    Write-Host "Adding profile..."
-    
-    if (Test-Path $settingsPath) {
-        $settings = Get-Content $settingsPath -Raw | ConvertFrom-Json
-        $newProfile = Get-Content $profileFilePath | ConvertFrom-Json
-        $existingProfile = $settings.profiles.list | Where-Object { $_.guid -eq $newProfile.guid }
+Write-Host "Adding profile..."
 
-        if ($existingProfile) {
-            Write-Host "The profile already exists in settings.json." -ForegroundColor Yellow
-        } else {
-            $settings.profiles.list += $newProfile
-            $settings.defaultProfile = $newProfile.guid
-            $settings | ConvertTo-Json -Depth 100 | Set-Content $settingsPath -Force
-            Write-Host "Profile successfully added from the JSON file." -ForegroundColor Green
-        }
+if (Test-Path $settingsPath) {
+    $settings = Get-Content $settingsPath -Raw | ConvertFrom-Json
+    $newProfile = Get-Content $profileFilePath | ConvertFrom-Json
+    $existingProfile = $settings.profiles.list | Where-Object { $_.guid -eq $newProfile.guid }
+
+    if ($existingProfile) {
+        Write-Host "The profile already exists." -ForegroundColor Yellow
     } else {
-        Write-Host "The settings.json file was not found at the specified path." -ForegroundColor Red
-        Exit 1
+        $settings.profiles.list += $newProfile
+        $settings.defaultProfile = $newProfile.guid
+        $settings | ConvertTo-Json -Depth 100 | Set-Content $settingsPath -Force
+        Write-Host "Profile successfully added." -ForegroundColor Green
     }
 } else {
-    Write-Host "The profile file was not found at the specified path: $profileFilePath" -ForegroundColor Red
+    Write-Host "The settings.json file was not found at the specified path." -ForegroundColor Red
     Exit 1
 }
 
