@@ -32,7 +32,7 @@ $requiredModules = @("PSReadLine", "Terminal-Icons")
 foreach ($module in $requiredModules) {
     if (-not (Get-Module -ListAvailable -Name $module)) {
         Write-Host "Installing module: $module..."
-        Install-Module -Name $module -Force -Scope AllUsers -AllowClobber -Confirm:$false
+        Install-Module -Name $module -Force -Scope AllUsers -AllowClobber -Confirm:$False
     } else {
         Write-Host "Module $module is already installed."
     }
