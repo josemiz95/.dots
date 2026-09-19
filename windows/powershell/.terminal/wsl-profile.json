@@ -1,0 +1,6 @@
+{
+    "commandline": "wsl.exe -d Ubuntu --cd __WINDOWS_HOME_WSL__",
+    "guid": "{d53696bc-a007-4d15-a63d-d5fba76ecaa8}",
+    "hidden": false,
+    "name": "Ubuntu (WSL)"
+}
